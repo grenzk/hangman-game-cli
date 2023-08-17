@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
 class Hangman
-  def initialize; end
+  attr_reader :secret_word
+
+  def initialize
+    @secret_word = secret_words.sample
+  end
+
+  def secret_words
+    File.read('words.txt').split.select { |word| word.length.between?(5, 12) }
+  end
 
   def display_title_screen
     loop do
