@@ -2,17 +2,39 @@
 
 class Hangman
   attr_reader :secret_word, :hidden_secret_word,
-              :attempts, :incorrect_guesses
+              :attempts, :correct_guesses, :incorrect_guesses
 
   def initialize
     @secret_word = secret_words.sample
     @hidden_secret_word = secret_word.chars.map { '_' }
     @attempts = 6
+    @correct_guesses = []
     @incorrect_guesses = []
   end
 
   def secret_words
     File.read('words.txt').split.select { |word| word.length.between?(5, 12) }
+  end
+
+  def reveal_letters(user_input)
+    indices = secret_word.length
+                         .times
+                         .find_all { |idx| secret_word[idx] == user_input }
+
+    indices.each do |idx|
+      hidden_secret_word[idx] = user_input
+    end
+  end
+
+  def validate_user_input
+    loop do
+      print "\nGuess a letter: "
+      input = gets.chomp.downcase
+
+      return input if input.match?(/\A[a-z]\z/)
+
+      puts "\nPlease enter a single letter."
+    end
   end
 
   def display_title_screen
@@ -32,8 +54,8 @@ class Hangman
 
     puts secret_word
 
-    puts 'Correct Guesses:'
-    puts "Incorrect Guesses: #{incorrect_guesses.join}"
+    puts "Correct Guesses: #{correct_guesses.uniq.join}"
+    puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}"
     puts "Attempts: #{attempts}"
     puts "\n#{hidden_secret_word.join(' ')}"
   end
@@ -54,17 +76,11 @@ class Hangman
     loop do
       display_in_game_menu
 
-      print "\nGuess a letter: "
-      user_input = gets.chomp.downcase
+      user_input = validate_user_input
+
       if secret_word.include?(user_input)
-
-        indices = secret_word.length
-                             .times
-                             .find_all { |idx| secret_word[idx] == user_input }
-
-        indices.each do |idx|
-          hidden_secret_word[idx] = user_input
-        end
+        correct_guesses << user_input
+        reveal_letters(user_input)
       else
         @attempts -= 1
         incorrect_guesses << user_input
