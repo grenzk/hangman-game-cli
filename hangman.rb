@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require 'tty-prompt'
+
 class Hangman
-  attr_reader :secret_word, :hidden_secret_word,
+  attr_reader :prompt, :secret_word, :hidden_secret_word,
               :attempts, :correct_guesses, :incorrect_guesses
 
   def initialize
+    @prompt = TTY::Prompt.new
     @secret_word = secret_words.sample
     @hidden_secret_word = secret_word.chars.map { '_' }
     @attempts = 6
@@ -38,15 +41,10 @@ class Hangman
   end
 
   def display_title_screen
-    loop do
-      system 'clear'
-      puts "\nH A N G M A N"
-      puts '_ _ _ _ _ _ _'
-
-      sleep 0.5
-      puts "\nPress F to Begin"
-      sleep 0.5
-    end
+    system 'clear'
+    puts "\nH A N G M A N"
+    puts '_ _ _ _ _ _ _'
+    puts ''
   end
 
   def display_in_game_menu
@@ -61,15 +59,11 @@ class Hangman
   end
 
   def start
-    blinking_thread = Thread.new { display_title_screen }
+    display_title_screen
+    choice = prompt.select('Choose an option:', ['New Game', 'Load Game', 'Exit'])
 
-    loop do
-      user_input = gets.chomp.downcase
-      break if user_input == 'f'
-    end
-
-    blinking_thread.kill
-    play
+    play if choice == 'New Game'
+    exit if choice == 'Exit'
   end
 
   def play
