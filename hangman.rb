@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 class Hangman
-  attr_reader :secret_word
+  attr_reader :secret_word, :hidden_secret_word,
+              :attempts, :incorrect_guesses
 
   def initialize
     @secret_word = secret_words.sample
+    @hidden_secret_word = secret_word.chars.map { '_' }
+    @attempts = 6
+    @incorrect_guesses = []
   end
 
   def secret_words
@@ -23,6 +27,17 @@ class Hangman
     end
   end
 
+  def display_in_game_menu
+    system 'clear'
+
+    puts secret_word
+
+    puts 'Correct Guesses:'
+    puts "Incorrect Guesses: #{incorrect_guesses.join}"
+    puts "Attempts: #{attempts}"
+    puts "\n#{hidden_secret_word.join(' ')}"
+  end
+
   def start
     blinking_thread = Thread.new { display_title_screen }
 
@@ -36,8 +51,25 @@ class Hangman
   end
 
   def play
-    system 'clear'
-    puts 'In-game'
+    loop do
+      display_in_game_menu
+
+      print "\nGuess a letter: "
+      user_input = gets.chomp.downcase
+      if secret_word.include?(user_input)
+
+        indices = secret_word.length
+                             .times
+                             .find_all { |idx| secret_word[idx] == user_input }
+
+        indices.each do |idx|
+          hidden_secret_word[idx] = user_input
+        end
+      else
+        @attempts -= 1
+        incorrect_guesses << user_input
+      end
+    end
   end
 end
 
