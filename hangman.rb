@@ -30,13 +30,9 @@ class Hangman
   end
 
   def validate_user_input
-    loop do
-      print "\nGuess a letter: "
-      input = gets.chomp.downcase
-
-      return input if input.match?(/\A[a-z]\z/)
-
-      puts "\nPlease enter a single letter."
+    prompt.ask("\nGuess a letter:") do |q|
+      q.validate(/\A[a-zA-Z]\z/, 'Please enter a single letter.')
+      q.modify :down
     end
   end
 
@@ -44,7 +40,6 @@ class Hangman
     system 'clear'
     puts "\nH A N G M A N"
     puts '_ _ _ _ _ _ _'
-    puts ''
   end
 
   def display_in_game_menu
@@ -60,7 +55,7 @@ class Hangman
 
   def start
     display_title_screen
-    choice = prompt.select('Choose an option:', ['New Game', 'Load Game', 'Exit'])
+    choice = prompt.select("\nChoose an option:", ['New Game', 'Load Game', 'Exit'])
 
     play if choice == 'New Game'
     exit if choice == 'Exit'
