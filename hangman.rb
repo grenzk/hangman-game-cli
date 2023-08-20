@@ -61,19 +61,23 @@ class Hangman
     exit if choice == 'Exit'
   end
 
+  def handle_guess(user_input)
+    if secret_word.include?(user_input)
+      correct_guesses << user_input
+      reveal_letters(user_input)
+    else
+      @attempts -= 1
+      incorrect_guesses << user_input
+    end
+  end
+
   def play
     loop do
       display_in_game_menu
 
       user_input = validate_user_input
 
-      if secret_word.include?(user_input)
-        correct_guesses << user_input
-        reveal_letters(user_input)
-      else
-        @attempts -= 1
-        incorrect_guesses << user_input
-      end
+      handle_guess(user_input)
     end
   end
 end
