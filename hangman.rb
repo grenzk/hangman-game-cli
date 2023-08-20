@@ -71,14 +71,27 @@ class Hangman
     end
   end
 
+  def won?
+    hidden_secret_word.all? { |element| element.match?(/[[:alpha:]]/) }
+  end
+
+  def lost?
+    attempts.zero?
+  end
+
   def play
     loop do
       display_in_game_menu
+
+      break if won? || lost?
 
       user_input = validate_user_input
 
       handle_guess(user_input)
     end
+
+    puts "\nThe dictionary bows before your brilliance!" if won?
+    puts "\nThe word eluded your grasp this time." if lost?
   end
 end
 
