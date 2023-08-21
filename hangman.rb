@@ -18,8 +18,15 @@ class Hangman
   end
 
   def display_pause_menu
-    puts 'Exiting...'
-    exit
+    system 'clear'
+    puts '=================================='
+    puts '           PAUSE MENU'
+    puts '=================================='
+
+    choice = prompt.select("\nChoose an option:", ['Resume', 'Save Game', 'Quit'])
+
+    gameplay if choice == 'Resume'
+    self.class.new.start if choice == 'Quit'
   end
 
   def secret_words
@@ -51,10 +58,10 @@ class Hangman
 
   def display_in_game_menu
     system 'clear'
-
+    puts "Press 'Esc' to pause the game."
     puts secret_word
 
-    puts "Correct Guesses: #{correct_guesses.uniq.join}\t\tAttempts: #{attempts}"
+    puts "\nCorrect Guesses: #{correct_guesses.uniq.join}\t\tAttempts: #{attempts}"
     puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}\t\tScore: #{score}"
     puts "\n#{hidden_secret_word.join(' ')}"
   end
@@ -99,9 +106,10 @@ class Hangman
   end
 
   def gameplay
+    prompt.on(:keyescape) { display_pause_menu }
+
     loop do
       display_in_game_menu
-      prompt.on(:keyescape) { display_pause_menu }
 
       break if game_over?
 
