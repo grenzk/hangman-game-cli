@@ -88,6 +88,10 @@ class Hangman
     @score += 1 if won?
   end
 
+  def play_again?
+    prompt.yes?("\nPlay again?") ? play : exit
+  end
+
   def play
     loop do
       display_in_game_menu
@@ -95,13 +99,15 @@ class Hangman
       break if game_over?
 
       user_input = validate_user_input
-
       handle_guess(user_input)
     end
 
     update_score
 
     puts won? ? "\nThe dictionary bows before your brilliance!" : "\nThe word eluded your grasp this time."
+
+    sleep 1.5
+    play_again?
   end
 end
 
