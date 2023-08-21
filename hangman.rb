@@ -99,6 +99,8 @@ class Hangman
       handle_guess(user_input)
     end
 
+    update_score
+
     puts won? ? "\nThe dictionary bows before your brilliance!" : "\nThe word eluded your grasp this time."
   end
 end
