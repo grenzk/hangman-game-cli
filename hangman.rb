@@ -88,7 +88,8 @@ class Hangman
     @score += 1 if won?
   end
 
-  def play_again?
+  def next_round?
+    @score = 0 if lost?
     prompt.yes?("\nPlay again?") ? self.class.new(@score).play : exit
   end
 
@@ -107,7 +108,7 @@ class Hangman
     puts won? ? "\nThe dictionary bows before your brilliance!" : "\nThe word eluded your grasp this time."
 
     sleep 1.5
-    play_again?
+    next_round?
   end
 end
 
