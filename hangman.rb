@@ -4,12 +4,14 @@ require 'tty-prompt'
 
 class Hangman
   attr_reader :prompt, :secret_word, :hidden_secret_word,
-              :attempts, :correct_guesses, :incorrect_guesses
+              :attempts, :correct_guesses, :incorrect_guesses,
+              :score
 
   def initialize
     @prompt = TTY::Prompt.new
     @secret_word = secret_words.sample
     @hidden_secret_word = secret_word.chars.map { '_' }
+    @score = 0
     @attempts = 6
     @correct_guesses = []
     @incorrect_guesses = []
@@ -47,9 +49,8 @@ class Hangman
 
     puts secret_word
 
-    puts "Correct Guesses: #{correct_guesses.uniq.join}"
-    puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}"
-    puts "Attempts: #{attempts}"
+    puts "Correct Guesses: #{correct_guesses.uniq.join}\t\tAttempts: #{attempts}"
+    puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}\t\tScore: #{score}"
     puts "\n#{hidden_secret_word.join(' ')}"
   end
 
@@ -79,19 +80,26 @@ class Hangman
     attempts.zero?
   end
 
+  def game_over?
+    won? || lost?
+  end
+
+  def update_score
+    @score += 1 if won?
+  end
+
   def play
     loop do
       display_in_game_menu
 
-      break if won? || lost?
+      break if game_over?
 
       user_input = validate_user_input
 
       handle_guess(user_input)
     end
 
-    puts "\nThe dictionary bows before your brilliance!" if won?
-    puts "\nThe word eluded your grasp this time." if lost?
+    puts won? ? "\nThe dictionary bows before your brilliance!" : "\nThe word eluded your grasp this time."
   end
 end
 
