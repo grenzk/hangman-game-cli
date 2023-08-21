@@ -7,11 +7,11 @@ class Hangman
               :attempts, :correct_guesses, :incorrect_guesses,
               :score
 
-  def initialize
+  def initialize(score = 0)
     @prompt = TTY::Prompt.new
     @secret_word = secret_words.sample
     @hidden_secret_word = secret_word.chars.map { '_' }
-    @score = 0
+    @score = score
     @attempts = 6
     @correct_guesses = []
     @incorrect_guesses = []
@@ -89,7 +89,7 @@ class Hangman
   end
 
   def play_again?
-    prompt.yes?("\nPlay again?") ? play : exit
+    prompt.yes?("\nPlay again?") ? self.class.new(@score).play : exit
   end
 
   def play
