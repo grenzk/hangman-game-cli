@@ -17,6 +17,11 @@ class Hangman
     @incorrect_guesses = []
   end
 
+  def display_pause_menu
+    puts 'Exiting...'
+    exit
+  end
+
   def secret_words
     File.read('words.txt').split.select { |word| word.length.between?(5, 12) }
   end
@@ -93,17 +98,21 @@ class Hangman
     prompt.yes?("\nPlay again?") ? self.class.new(@score).play : exit
   end
 
-  def play
+  def gameplay
     loop do
       display_in_game_menu
+      prompt.on(:keyescape) { display_pause_menu }
 
       break if game_over?
 
       user_input = validate_user_input
       handle_guess(user_input)
     end
-
     update_score
+  end
+
+  def play
+    gameplay
 
     puts won? ? "\nThe dictionary bows before your brilliance!" : "\nThe word eluded your grasp this time."
 
