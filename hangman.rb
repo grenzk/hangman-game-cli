@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'tty-prompt'
+require 'json'
 
 require_relative 'hangman/game_ui'
 require_relative 'hangman/game_state'
@@ -23,11 +24,44 @@ class Hangman
     @incorrect_guesses = []
   end
 
+  def save_game
+    current_game_state = { secret_word:, hidden_secret_word:, correct_guesses:,
+                           incorrect_guesses:, score: }
+
+    File.open('save_file.json', 'w') { |file| file.write(JSON.dump(current_game_state)) }
+
+    sleep 1.5
+    puts 'Game saved successfully!'
+    sleep 1.5
+    display_pause_menu
+  end
+
+  def load_game
+    saved_data = File.read('save_file.json')
+    loaded_data = JSON.parse(saved_data, symbolize_names: true)
+
+    @secret_word = loaded_data[:secret_word]
+    @hidden_secret_word = loaded_data[:hidden_secret_word]
+    @correct_guesses = loaded_data[:correct_guesses]
+    @incorrect_guesses = loaded_data[:incorrect_guesses]
+    @score = loaded_data[:score]
+
+    sleep 1.5
+    puts 'Loading...'
+    sleep 1.5
+  end
+
   def start
     display_title_screen
     choice = prompt.select("\nChoose an option:", ['New Game', 'Load Game', 'Exit'])
 
     play if choice == 'New Game'
+
+    if choice == 'Load Game' && File.size?('save_file.json')
+      load_game
+      gameplay
+    end
+
     exit if choice == 'Exit'
   end
 
