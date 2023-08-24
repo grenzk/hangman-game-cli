@@ -58,7 +58,7 @@ class Hangman
   end
 
   def start
-    display_title_screen
+    display_title_header
     choice = prompt.select("\nChoose an option:", ['New Game', 'Load Game', 'Exit'])
 
     case choice
@@ -83,11 +83,11 @@ class Hangman
     prompt.on(:keyescape) { display_pause_menu }
 
     loop do
-      display_in_game_menu
+      display_in_game_ui
 
       break if game_over?
 
-      user_input = validate_user_input
+      user_input = prompt_with_validation
       handle_guess(user_input)
     end
     update_score
@@ -121,7 +121,7 @@ class Hangman
     indices.each { |idx| hidden_secret_word[idx] = user_input }
   end
 
-  def validate_user_input
+  def prompt_with_validation
     prompt.ask("\nGuess a letter:") do |q|
       q.validate(/\A[a-zA-Z]\z/, 'Please enter a single letter.')
       q.modify :down
