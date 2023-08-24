@@ -19,8 +19,8 @@ class Hangman
 
   def initialize(score = 0)
     @prompt = TTY::Prompt.new
-    @secret_word = secret_words.sample
-    @hidden_secret_word = secret_word.chars.map { '_' }
+    @secret_word = select_secret_word
+    @hidden_secret_word = initialize_hidden_secret_word
     @score = score
     @attempts = MAX_ATTEMPTS
     @correct_guesses = []
@@ -106,6 +106,14 @@ class Hangman
 
   def secret_words
     File.read('words.txt').split.select { |word| word.length.between?(5, 12) }
+  end
+
+  def select_secret_word
+    secret_words.sample
+  end
+
+  def initialize_hidden_secret_word
+    Array.new(secret_word.length, '_')
   end
 
   def reveal_letters(user_input)
