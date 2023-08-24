@@ -61,14 +61,12 @@ class Hangman
     display_title_screen
     choice = prompt.select("\nChoose an option:", ['New Game', 'Load Game', 'Exit'])
 
-    play if choice == 'New Game'
-
-    if choice == 'Load Game'
-      load_game
-      play
+    case choice
+    when 'New Game' then play
+    when 'Load Game' then load_game
+                          play
+    when 'Exit' then exit
     end
-
-    exit if choice == 'Exit'
   end
 
   def handle_guess(user_input)
