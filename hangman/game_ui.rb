@@ -26,13 +26,11 @@ module GameUI
 
     choice = prompt.select("\nChoose an option:", ['Resume', 'Save Game', 'Quit'])
 
-    play if choice == 'Resume'
-
-    if choice == 'Save Game'
-      prompt.yes?('Save game?') ? save_game : display_pause_menu
+    case choice
+    when 'Resume' then play
+    when 'Save Game' then prompt.yes?('Save game?') ? save_game : display_pause_menu
+    when 'Quit' then self.class.new.start
     end
-
-    self.class.new.start if choice == 'Quit'
   end
 
   def display_in_game_ui
