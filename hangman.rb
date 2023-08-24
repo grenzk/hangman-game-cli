@@ -10,12 +10,13 @@ class Hangman
   include GameUI
   include GameState
 
-  attr_reader :prompt, :secret_word, :hidden_secret_word,
+  attr_reader :prompt, :file_path, :secret_word, :hidden_secret_word,
               :attempts, :correct_guesses, :incorrect_guesses,
-              :score
+              :score, :save_data
 
   def initialize(score = 0)
     @prompt = TTY::Prompt.new
+    @file_path = 'save_data.json'
     @secret_word = secret_words.sample
     @hidden_secret_word = secret_word.chars.map { '_' }
     @score = score
@@ -25,10 +26,12 @@ class Hangman
   end
 
   def save_game
-    current_game_state = { secret_word:, hidden_secret_word:, correct_guesses:,
-                           incorrect_guesses:, score: }
+    save_data = load_save_data
 
-    File.open('save_file.json', 'w') { |file| file.write(JSON.dump(current_game_state)) }
+    save_data << { secret_word:, hidden_secret_word:, correct_guesses:,
+                   incorrect_guesses:, score:, attempts: }
+
+    File.open(file_path, 'w') { |file| file.write(JSON.dump(save_data)) }
 
     sleep 1.5
     puts 'Game saved successfully!'
@@ -37,17 +40,19 @@ class Hangman
   end
 
   def load_game
-    saved_data = File.read('save_file.json')
-    loaded_data = JSON.parse(saved_data, symbolize_names: true)
+    save_data = load_save_data
+    filtered_save_data = format_filtered_save_data(save_data) << 'Back'
 
-    @secret_word = loaded_data[:secret_word]
-    @hidden_secret_word = loaded_data[:hidden_secret_word]
-    @correct_guesses = loaded_data[:correct_guesses]
-    @incorrect_guesses = loaded_data[:incorrect_guesses]
-    @score = loaded_data[:score]
+    display_load_game_header
 
-    sleep 1.5
-    puts 'Loading...'
+    choice = prompt.select("\nSelect a saved game to load:", filtered_save_data)
+    choice == 'Back' ? start : choice = choice.split(' - ')[1]
+
+    selected_save_data = save_data.find { |data| data[:hidden_secret_word].join(' ') == choice }
+
+    restore_game_state(selected_save_data)
+
+    puts "\nLoading..."
     sleep 1.5
   end
 
@@ -57,7 +62,7 @@ class Hangman
 
     play if choice == 'New Game'
 
-    if choice == 'Load Game' && File.size?('save_file.json')
+    if choice == 'Load Game'
       load_game
       gameplay
     end
@@ -114,6 +119,10 @@ class Hangman
       q.validate(/\A[a-zA-Z]\z/, 'Please enter a single letter.')
       q.modify :down
     end
+  end
+
+  def load_save_data
+    File.exist?(file_path) ? JSON.parse(File.read(file_path), symbolize_names: true) : []
   end
 end
 

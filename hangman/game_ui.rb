@@ -5,6 +5,19 @@ module GameUI
     puts '_ _ _ _ _ _ _'
   end
 
+  def display_load_game_header
+    system 'clear'
+    puts '=================================='
+    puts '            LOAD GAME'
+    puts '=================================='
+
+    return if File.exist?(file_path)
+
+    puts "\nThere is no save data."
+    sleep 1.5
+    start
+  end
+
   def display_pause_menu
     system 'clear'
     puts '=================================='
