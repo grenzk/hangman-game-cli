@@ -10,17 +10,19 @@ class Hangman
   include GameUI
   include GameState
 
-  attr_reader :prompt, :file_path, :secret_word, :hidden_secret_word,
+  SAVE_FILE_PATH = 'save_data.json'
+  MAX_ATTEMPTS = 6
+
+  attr_reader :prompt, :secret_word, :hidden_secret_word,
               :attempts, :correct_guesses, :incorrect_guesses,
-              :score, :save_data
+              :score
 
   def initialize(score = 0)
     @prompt = TTY::Prompt.new
-    @file_path = 'save_data.json'
     @secret_word = secret_words.sample
     @hidden_secret_word = secret_word.chars.map { '_' }
     @score = score
-    @attempts = 6
+    @attempts = MAX_ATTEMPTS
     @correct_guesses = []
     @incorrect_guesses = []
   end
@@ -31,7 +33,7 @@ class Hangman
     save_data << { secret_word:, hidden_secret_word:, correct_guesses:,
                    incorrect_guesses:, score:, attempts: }
 
-    File.open(file_path, 'w') { |file| file.write(JSON.dump(save_data)) }
+    File.open(SAVE_FILE_PATH, 'w') { |file| file.write(JSON.dump(save_data)) }
 
     sleep 1.5
     puts "\nGame saved successfully!"
@@ -122,7 +124,7 @@ class Hangman
   end
 
   def load_save_data
-    File.exist?(file_path) ? JSON.parse(File.read(file_path), symbolize_names: true) : []
+    File.exist?(SAVE_FILE_PATH) ? JSON.parse(File.read(SAVE_FILE_PATH), symbolize_names: true) : []
   end
 end
 

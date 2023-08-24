@@ -11,7 +11,7 @@ module GameUI
     puts '            LOAD GAME'
     puts '=================================='
 
-    return if File.exist?(file_path)
+    return if File.exist?(Hangman::SAVE_FILE_PATH)
 
     puts "\nThere is no save data."
     sleep 1.5
