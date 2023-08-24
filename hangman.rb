@@ -34,7 +34,7 @@ class Hangman
     File.open(file_path, 'w') { |file| file.write(JSON.dump(save_data)) }
 
     sleep 1.5
-    puts 'Game saved successfully!'
+    puts "\nGame saved successfully!"
     sleep 1.5
     display_pause_menu
   end
@@ -64,7 +64,7 @@ class Hangman
 
     if choice == 'Load Game'
       load_game
-      gameplay
+      play
     end
 
     exit if choice == 'Exit'
