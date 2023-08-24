@@ -17,7 +17,7 @@ module GameState
 
   def next_round?
     @score = 0 if lost?
-    prompt.yes?("\nPlay again?") ? self.class.new(@score).play : exit
+    prompt.yes?("\nPlay again?") ? self.class.new(@score).play : self.class.new.start
   end
 
   def format_filtered_save_data(save_data)
