@@ -38,8 +38,7 @@ module GameUI
   def display_in_game_menu
     system 'clear'
     puts "Press 'Esc' to pause the game."
-    puts secret_word
-
+    # puts secret_word
     puts "\nCorrect Guesses: #{correct_guesses.uniq.join}\t\tAttempts: #{attempts}"
     puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}\t\tScore: #{score}"
     puts "\n#{hidden_secret_word.join(' ')}"
