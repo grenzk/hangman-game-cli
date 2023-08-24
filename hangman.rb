@@ -48,10 +48,9 @@ class Hangman
     display_load_game_header
 
     choice = prompt.select("\nSelect a saved game to load:", filtered_save_data)
-    choice == 'Back' ? start : choice = choice.split(' - ')[1]
+    return start if choice == 'Back'
 
-    selected_save_data = save_data.find { |data| data[:hidden_secret_word].join(' ') == choice }
-
+    selected_save_data = save_data.find { |data| data[:hidden_secret_word].join(' ') == choice.split(' - ')[1] }
     restore_game_state(selected_save_data)
 
     puts "\nLoading..."
