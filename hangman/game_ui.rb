@@ -33,12 +33,19 @@ module GameUI
     end
   end
 
+  def display_guesses
+    puts "\nCorrect Guesses: #{correct_guesses.uniq.join}\t\tAttempts: #{attempts}"
+    puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}\t\tScore: #{score}"
+  end
+
+  def display_word_status
+    puts lost? ? "\n#{secret_word.chars.join(' ')}" : "\n#{hidden_secret_word.join(' ')}"
+  end
+
   def display_in_game_ui
     system 'clear'
     puts "Press 'Esc' to pause the game."
-    # puts secret_word
-    puts "\nCorrect Guesses: #{correct_guesses.uniq.join}\t\tAttempts: #{attempts}"
-    puts "Incorrect Guesses: #{incorrect_guesses.uniq.join}\t\tScore: #{score}"
-    puts "\n#{hidden_secret_word.join(' ')}"
+    display_guesses
+    display_word_status
   end
 end
